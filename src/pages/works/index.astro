@@ -1,0 +1,47 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import { profile } from "../../data/profile";
+
+const isDev = import.meta.env.DEV;
+const works = (
+  await getCollection("works", ({ data }) => isDev || !data.draft)
+).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Layout title={`制作物一覧 | ${profile.name}`}>
+  <section>
+    <h2>制作物一覧</h2>
+    {
+      works.length === 0 ? (
+        <p>準備中です。</p>
+      ) : (
+        <div class="work-grid">
+          {works.map((work) => (
+            <a class="work-card" href={`/works/${work.id}`}>
+              <div class="thumb">
+                {work.data.thumbnail ? (
+                  <img
+                    src={work.data.thumbnail}
+                    alt=""
+                    style="width:100%;height:100%;object-fit:cover;border-radius:4px;"
+                  />
+                ) : (
+                  "構成図準備中"
+                )}
+              </div>
+              <h3>
+                {work.data.title}
+                {work.data.draft && <span class="draft-badge">draft</span>}
+              </h3>
+              <p>{work.data.summary}</p>
+              <ul class="tag-list">
+                {work.data.stack.map((s) => <li>{s}</li>)}
+              </ul>
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </section>
+</Layout>

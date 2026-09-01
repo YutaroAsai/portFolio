@@ -1,0 +1,40 @@
+<!--
+  「このサイト内で読める記事」のテンプレート。
+  Zennにリンクするだけの記事は、このファイルは不要。
+  articles/index.html と index.html に Zenn記事へ直接リンクする work-card を書けばよい。
+
+  このサイト内で読める記事を作る場合:
+    1. このファイルを articles/<わかりやすいID>.html としてコピーする
+    2. 中身を書き換える
+    3. articles/index.html と(トップに載せるなら)index.html の該当セクションに
+       この記事への work-card リンクを追記する
+-->
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <title>記事タイトル | 氏名を書く</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav>
+        <a href="/">プロフィール</a>
+        <a class="secondary" href="/works/">制作物</a>
+        <a class="secondary" href="/articles/">記事</a>
+      </nav>
+    </header>
+    <main>
+      <article>
+        <h1>記事タイトル</h1>
+        <time datetime="2026-08-01">2026-08-01</time>
+
+        <p>本文をここに書く。</p>
+
+        <p><a class="more" href="/articles/">← 記事一覧に戻る</a></p>
+      </article>
+    </main>
+  </body>
+</html>

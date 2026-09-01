@@ -1,0 +1,37 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection, render } from "astro:content";
+import { profile } from "../../data/profile";
+
+export async function getStaticPaths() {
+  const isDev = import.meta.env.DEV;
+  const works = await getCollection("works", ({ data }) => isDev || !data.draft);
+  return works.map((work) => ({
+    params: { id: work.id },
+    props: { work },
+  }));
+}
+
+const { work } = Astro.props;
+const { Content } = await render(work);
+---
+
+<Layout title={`${work.data.title} | ${profile.name}`}>
+  <article>
+    <h1>
+      {work.data.title}
+      {work.data.draft && <span class="draft-badge">draft</span>}
+    </h1>
+    <ul class="tag-list">
+      {work.data.stack.map((s) => <li>{s}</li>)}
+    </ul>
+    <div class="work-links">
+      {work.data.github && <a href={work.data.github} target="_blank" rel="noopener noreferrer">GitHub</a>}
+      {work.data.zennArticle && <a href={work.data.zennArticle} target="_blank" rel="noopener noreferrer">関連記事(Zenn)</a>}
+    </div>
+    <section>
+      <Content />
+    </section>
+    <p><a class="more" href="/works">← 制作物一覧に戻る</a></p>
+  </article>
+</Layout>
