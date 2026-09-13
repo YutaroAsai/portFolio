@@ -1,10 +1,13 @@
 ---
+// 記事の詳細ページ。このサイト内で本文を読める記事(externalUrlを指定していない記事)専用。
+// Zennにリンクするだけの記事はこのページの対象外(下のgetStaticPathsで除外している)。
 import Layout from "../../layouts/Layout.astro";
 import { getCollection, render } from "astro:content";
 import { profile } from "../../data/profile";
 
 export async function getStaticPaths() {
   const isDev = import.meta.env.DEV;
+  // !data.externalUrl: externalUrlが設定されている記事(Zennリンク型)はここでは生成しない
   const articles = await getCollection(
     "articles",
     ({ data }) => !data.externalUrl && (isDev || !data.draft),
@@ -29,6 +32,7 @@ const { Content } = await render(article);
       {article.data.date.toISOString().slice(0, 10)}
     </time>
     <section>
+      <!-- Markdown本文がそのままここに表示される -->
       <Content />
     </section>
     <p><a class="more" href="/articles">← 記事一覧に戻る</a></p>

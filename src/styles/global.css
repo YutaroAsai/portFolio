@@ -1,10 +1,13 @@
+/* 全ページ共通のスタイル。src/layouts/Layout.astro から読み込まれている。 */
+
+/* サイト全体で使う色・余白などの変数(CSSカスタムプロパティ) */
 :root {
   --color-bg: #ffffff;
   --color-text: #1a1a1a;
-  --color-muted: #666666;
+  --color-muted: #666666;    /* 補足文・日付などの薄い色 */
   --color-border: #e2e2e2;
   --color-accent: #1a56db;
-  --max-width: 760px;
+  --max-width: 760px;        /* 本文の最大幅。ヘッダー・mainの両方で使う */
 }
 
 * {
@@ -23,9 +26,10 @@ body {
 main {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 2.5rem 1.25rem 4rem;
+  padding: 0.75rem;
 }
 
+/* ヘッダーナビ(プロフィール/制作物/記事) */
 header.site-header {
   border-bottom: 1px solid var(--color-border);
 }
@@ -45,6 +49,7 @@ header.site-header a {
   font-weight: 600;
 }
 
+/* ナビの2番目以降のリンク(制作物・記事)は少し薄い色にして、サイト名と差をつける */
 header.site-header nav a.secondary {
   font-weight: 400;
   color: var(--color-muted);
@@ -52,12 +57,15 @@ header.site-header nav a.secondary {
 
 h1, h2, h3 {
   line-height: 1.4;
+  margin: 0;
 }
 
+/* 各ページの<section>(プロフィール欄/記事欄/制作物欄など)の間隔 */
 section {
-  margin-top: 2.5rem;
+  margin: 0;
 }
 
+/* 各セクションの見出し(「記事」「制作物」など)の下線 */
 section > h2 {
   font-size: 1.1rem;
   border-bottom: 1px solid var(--color-border);
@@ -65,22 +73,63 @@ section > h2 {
   margin-bottom: 1rem;
 }
 
+.role {
+  margin: 0 0 0.5rem 0;
+  color: var(--color-muted);
+  font-size: 1rem;
+}
+
+/* 自己紹介文(profile.ts の summary)。
+   pre-line: ソース上でEnterキーで入れた改行(\n)をそのまま見た目の改行として表示する。
+   ただし連続する半角スペース・タブは通常通り1つに詰められ、長い行は画面幅で折り返される
+   (pre や pre-wrap とは違い、素のテキストらしい見た目を保ったまま改行だけ再現できる)。 */
+.profile-summary {
+  margin: 0;
+  white-space: pre-line;
+}
+
+/* 技術要素一覧。実務経験/個人開発/学習中の3グループを縦に並べる。
+   グループ分けは見出し(.skill-group-label)のテキストだけで区別し、
+   バッジ自体の見た目は3グループとも統一する。 */
+.skill-groups {
+  margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* グループの見出し(「実務経験」「個人開発で使用」など)。
+   本文の<h2>より小さく地味にして、あくまでラベルという位置づけにする。 */
+.skill-group-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--color-muted);
+  margin: 0 0;
+}
+
 .skills {
   list-style: none;
+  margin: 0.5rem 0;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
+/* バッジ1個分の見た目。全グループ共通(ドットなし) */
 .skills li {
+  display: inline-flex;
+  align-items: center;
+  background: #f7f8fa;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
-  padding: 0.2rem 0.75rem;
+  border-radius: 6px;
+  padding: 0.3rem 0.75rem;
   font-size: 0.85rem;
-  color: var(--color-muted);
+  font-weight: 500;
+  color: var(--color-text);
 }
 
+/* 罫線区切りの単純なリスト(現状どのページからも参照されていない予備クラス) */
 .list-plain {
   list-style: none;
   padding: 0;
@@ -101,12 +150,14 @@ section > h2 {
   white-space: nowrap;
 }
 
+/* 制作物・記事の一覧で使うカードグリッド(何列になるかは画面幅で自動調整) */
 .work-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1rem;
 }
 
+/* カード1枚(work-card)自体が<a>タグ = クリックできるリンク */
 .work-card {
   border: 1px solid var(--color-border);
   border-radius: 8px;
@@ -116,6 +167,7 @@ section > h2 {
   display: block;
 }
 
+/* カード上部のサムネイル/構成図領域。画像が無ければ「構成図準備中」という文字だけ出る */
 .work-card .thumb {
   aspect-ratio: 16 / 9;
   background: #f2f4f7;
@@ -139,6 +191,7 @@ section > h2 {
   margin: 0;
 }
 
+/* 使用技術タグ・「Zenn」タグなど、カード内の小さいラベル群 */
 .tag-list {
   list-style: none;
   padding: 0;
@@ -156,18 +209,149 @@ section > h2 {
   padding: 0.1rem 0.4rem;
 }
 
+/* 「制作物一覧を見る →」のような、一覧ページへの誘導リンク */
 a.more {
   display: inline-block;
   margin-top: 1rem;
   font-size: 0.9rem;
 }
 
-.work-links {
+/* プロフィール欄のZenn/GitHubリンク、詳細ページのGitHub/Zennリンクの横並び */
+.external-links {
   display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0.5rem 0;
 }
 
+/* 外部サイトへのリンク1つ分。矢印アイコン付きの小さいチップ型ボタンにして、
+   「このサイトの外に出る」ことが視覚的にも分かるようにしている。 */
+a.external-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
+a.external-link::after {
+  content: "↗";
+  font-size: 0.8em;
+  color: var(--color-muted);
+  transition: color 0.15s ease;
+}
+
+a.external-link:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background-color: color-mix(in srgb, var(--color-accent) 6%, transparent);
+}
+
+a.external-link:hover::after {
+  color: var(--color-accent);
+}
+
+/* 案件経歴(src/data/projectHistory.ts)がまだ空のときに表示する枠。
+   破線にして「これから中身が入る場所」だと分かるようにしている。 */
+.project-history-empty {
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* 所属・常駐先の企業ごとのまとまり */
+.project-history-org + .project-history-org {
+  margin-top: 2rem;
+}
+
+.project-history-org-name {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.project-history-org-note {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  margin: 0.2rem 0 0;
+}
+
+/* 案件経歴のタイムライン。左に期間、右に内容を並べ、その間の隙間の中央に縦線+丸ポチを重ねる。
+   --timeline-label-width(期間列の幅)と--timeline-gutter(列の間の隙間)を separate に持ち、
+   縦線・丸ポチはその隙間のちょうど真ん中(--timeline-axis-x)に置くことで、
+   期間の文字列がどれだけ長くても線・丸ポチに接触しないようにしている。 */
+.timeline {
+  --timeline-label-width: 5rem; /* 期間列の幅。収まらなければ折り返す */
+  --timeline-gutter: 1.5rem; /* 期間列と本文の間の隙間。この中央に縦線・丸ポチを置く */
+  --timeline-axis-x: calc(var(--timeline-label-width) + var(--timeline-gutter) / 2);
+  position: relative;
+  list-style: none;
+  padding-left: 0.5rem; /* 会社名より少し字下げした位置に揃える */
+  margin: 0.75rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: var(--timeline-axis-x);
+  top: 0.4rem;
+  bottom: 0.4rem;
+  width: 2px;
+  background: var(--color-border);
+}
+
+.timeline-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--timeline-label-width) 1fr;
+  column-gap: var(--timeline-gutter);
+}
+
+/* 縦線の上に重ねる丸ポチ */
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: var(--timeline-axis-x);
+  top: 0.3rem;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px; /* 丸ポチ(8px)の中心を縦線の位置に合わせる */
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.timeline-period {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  text-align: left;
+  padding-top: 0.15rem;
+}
+
+.project-history-item-title {
+  font-size: 0.95rem;
+  margin: 0 0 0.35rem;
+}
+
+/* 案件の説明文。profile-summaryと同様、Enterで入れた改行をそのまま表示する */
+.timeline-content p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  white-space: pre-line;
+}
+
+/* draft:true の作品/記事に付く「draft」バッジ(本番ビルドでは表示されるコンテンツ自体が無い) */
 .draft-badge {
   display: inline-block;
   font-size: 0.7rem;

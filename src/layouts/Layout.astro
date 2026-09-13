@@ -1,9 +1,12 @@
 ---
+// レイアウトコンポーネント。全ページ共通の<head>とヘッダーナビをここにまとめている。
+// 各pages/*.astroは <Layout title="..."> 中身 </Layout> という形で必ずこれを経由する。
 import "../styles/global.css";
 import { profile } from "../data/profile";
 
+// このコンポーネントが受け取るprops(呼び出し側から渡される値)の型定義
 interface Props {
-  title: string;
+  title: string; // <title>タグ・ブラウザタブに出るページタイトル
 }
 
 const { title } = Astro.props;
@@ -18,14 +21,19 @@ const { title } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
+    <!-- 全ページ共通のヘッダーナビ。文言やリンク先を変えたい場合はここを直接編集する -->
     <header class="site-header">
       <nav>
         <a href="/">プロフィール</a>
+        <!-- 制作物・記事はまだ未完成なので、公開時は一旦コメントアウトしている。
+             準備ができたらこの2行のコメントを外せば復活する。
         <a class="secondary" href="/works">制作物</a>
         <a class="secondary" href="/articles">記事</a>
+        -->
       </nav>
     </header>
     <main>
+      <!-- <slot /> = 各ページ側で<Layout>...</Layout>の中に書いた中身がここに差し込まれる -->
       <slot />
     </main>
   </body>

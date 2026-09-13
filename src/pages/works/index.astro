@@ -1,9 +1,11 @@
 ---
+// 制作物一覧ページ(/works)。works コレクションの全件をカード表示する。
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import { profile } from "../../data/profile";
 
 const isDev = import.meta.env.DEV;
+// draft(下書き)は本番ビルドでは除外、開発中は全件表示。新しい日付順に並べ替え。
 const works = (
   await getCollection("works", ({ data }) => isDev || !data.draft)
 ).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
@@ -18,6 +20,7 @@ const works = (
       ) : (
         <div class="work-grid">
           {works.map((work) => (
+            // カード自体がリンク。飛び先は work.id (=Markdownファイル名から拡張子を除いたもの)
             <a class="work-card" href={`/works/${work.id}`}>
               <div class="thumb">
                 {work.data.thumbnail ? (

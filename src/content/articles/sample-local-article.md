@@ -2,7 +2,7 @@
 title: "(サンプル) このサイト内で読める記事パターン"
 summary: "externalUrlを指定しないと、カードからこのサイト内の記事詳細ページに飛びます。"
 date: 2026-08-02
-draft: true
+draft: true   # true=本番ビルドで非表示。公開時はfalseにする(externalUrlはあえて書いていない)
 ---
 
 externalUrlを書かなければ、このMarkdown本文がそのまま記事詳細ページに表示されます。

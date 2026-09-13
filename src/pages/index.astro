@@ -1,97 +1,102 @@
 ---
+// トップページ(/)。プロフィールのみのシンプルな構成。
+// 記事一覧・制作物一覧はヘッダーナビ(/articles, /works)から辿る。
 import Layout from "../layouts/Layout.astro";
-import { profile } from "../data/profile";
-import { getCollection } from "astro:content";
+import { profile, careerStartDate, calculateYearsOfExperience } from "../data/profile";
+import { projectHistory } from "../data/projectHistory";
 
-const isDev = import.meta.env.DEV;
-const allWorks = await getCollection(
-  "works",
-  ({ data }) => isDev || !data.draft,
-);
-const recentWorks = allWorks
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
+// 技術要素を表示する順番とラベル。profile.ts の skills.production/personal/learning に対応する。
+const skillGroups = [
+  { key: "production", label: "実務経験" },
+  { key: "personal", label: "個人開発で使用" },
+  { key: "learning", label: "学習中" },
+] as const;
 
-const allArticles = await getCollection(
-  "articles",
-  ({ data }) => isDev || !data.draft,
-);
-const recentArticles = allArticles
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
+// summary文中の "{years}" を境目に分割し、その位置にだけ経験年数の<span>を挟んで表示する。
+// (このsplitはビルド時に実行される。表示された後の再計算は下の<script>がブラウザ側で行う)
+const yearsOfExperience = calculateYearsOfExperience(careerStartDate);
+const summaryParts = profile.summary.split("{years}");
 ---
 
 <Layout title={`${profile.name} | Portfolio`}>
+  <!-- プロフィール欄: src/data/profile.ts の内容をそのまま表示 -->
   <section id="profile">
     <h1>{profile.name}</h1>
-    <p>{profile.role}</p>
-    <p>{profile.summary}</p>
-    <ul class="skills">
-      {profile.skills.map((skill) => <li>{skill}</li>)}
-    </ul>
-    <div class="work-links">
-      <a href={profile.links.zenn} target="_blank" rel="noopener noreferrer">Zenn</a>
-      <a href={profile.links.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+    <p class="role">{profile.role}</p>
+    <p class="profile-summary">
+      {summaryParts.map((part, i) => (
+        <>
+          {part}
+          {i < summaryParts.length - 1 && (
+            <span id="years-of-experience">{yearsOfExperience}</span>
+          )}
+        </>
+      ))}
+    </p>
+    <div class="external-links">
+      <!-- Zennはまだ記事が無いので、公開時は一旦コメントアウトしている。
+           記事を書き始めたらこの1行のコメントを外せば復活する。
+      <a class="external-link" href={profile.links.zenn} target="_blank" rel="noopener noreferrer">Zenn</a>
+      -->
+      <a class="external-link" href={profile.links.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+    </div>
+    <div class="skill-groups">
+      {skillGroups.map(({ key, label }) => {
+        const items = profile.skills[key];
+        // 中身が空のグループ(例: learningを使っていない)は表示しない
+        return items.length > 0 && (
+          <div class="skill-group">
+            <h3 class="skill-group-label">{label}</h3>
+            <ul class="skills">
+              {items.map((skill) => <li>{skill}</li>)}
+            </ul>
+          </div>
+        );
+      })}
     </div>
   </section>
 
-  <section id="articles">
-    <h2>記事</h2>
+  <!-- 案件経歴: SESなどで携わった案件を簡単に列挙する欄。中身は src/data/projectHistory.ts -->
+  <section id="project-history">
+    <h2>案件経歴</h2>
     {
-      recentArticles.length === 0 ? (
-        <p>準備中です。</p>
+      projectHistory.length === 0 ? (
+        <p class="project-history-empty">
+          準備中です。src/data/projectHistory.ts に案件を追加するとここに表示されます。
+        </p>
       ) : (
-        <div class="work-grid">
-          {recentArticles.map((article) => (
-            <a
-              class="work-card"
-              href={article.data.externalUrl ?? `/articles/${article.id}`}
-              target={article.data.externalUrl ? "_blank" : undefined}
-              rel={article.data.externalUrl ? "noopener noreferrer" : undefined}
-            >
-              <h3>
-                {article.data.title}
-                {article.data.draft && <span class="draft-badge">draft</span>}
-              </h3>
-              <p>{article.data.summary}</p>
-            </a>
-          ))}
-        </div>
+        projectHistory.map((group) => (
+          <div class="project-history-org">
+            <h3 class="project-history-org-name">{group.organization}</h3>
+            {group.note && <p class="project-history-org-note">{group.note}</p>}
+            <!-- タイムライン: 左に期間(時間軸)、右に案件内容を並べる -->
+            <ul class="timeline">
+              {group.projects.map((p) => (
+                <li class="timeline-item">
+                  <span class="timeline-period">{p.period}</span>
+                  <div class="timeline-content">
+                    <h4 class="project-history-item-title">{p.title}</h4>
+                    <p>{p.description}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
       )
     }
-    <a class="more" href="/articles">記事一覧を見る →</a>
-  </section>
-
-  <section id="works">
-    <h2>制作物</h2>
-    {
-      recentWorks.length === 0 ? (
-        <p>準備中です。</p>
-      ) : (
-        <div class="work-grid">
-          {recentWorks.map((work) => (
-            <a class="work-card" href={`/works/${work.id}`}>
-              <div class="thumb">
-                {work.data.thumbnail ? (
-                  <img
-                    src={work.data.thumbnail}
-                    alt=""
-                    style="width:100%;height:100%;object-fit:cover;border-radius:4px;"
-                  />
-                ) : (
-                  "構成図準備中"
-                )}
-              </div>
-              <h3>
-                {work.data.title}
-                {work.data.draft && <span class="draft-badge">draft</span>}
-              </h3>
-              <p>{work.data.summary}</p>
-            </a>
-          ))}
-        </div>
-      )
-    }
-    <a class="more" href="/works">制作物一覧を見る →</a>
   </section>
 </Layout>
+
+<script>
+  // ここはブラウザ側で実行されるコード(ビルド時ではなく、訪問者がページを開いた瞬間に動く)。
+  // ビルド時点の年数(上のyearsOfExperience)が古くなっていても、
+  // ページを開くたびに「今日現在」を基準とした正しい年数に上書きする。
+  // 再ビルド・再デプロイしなくても常に正確な年数が表示されるようにするための仕組み。
+  import { careerStartDate, calculateYearsOfExperience } from "../data/profile";
+
+  const el = document.getElementById("years-of-experience");
+  if (el) {
+    el.textContent = String(calculateYearsOfExperience(careerStartDate));
+  }
+</script>

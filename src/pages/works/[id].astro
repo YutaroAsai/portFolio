@@ -1,18 +1,23 @@
 ---
+// 制作物の詳細ページ。ファイル名の[id]が動的な部分になり、
+// 例えば works/sample-cognito-api.md があれば /works/sample-cognito-api というURLが生成される。
 import Layout from "../../layouts/Layout.astro";
 import { getCollection, render } from "astro:content";
 import { profile } from "../../data/profile";
 
+// getStaticPaths: 静的サイト生成(SSG)のため、「どのURLを何件生成するか」をビルド時に決める関数。
+// works コレクションの各記事1件につき、/works/<id> というページが1枚生成される。
 export async function getStaticPaths() {
   const isDev = import.meta.env.DEV;
   const works = await getCollection("works", ({ data }) => isDev || !data.draft);
   return works.map((work) => ({
-    params: { id: work.id },
-    props: { work },
+    params: { id: work.id },   // URLの[id]部分に入る値
+    props: { work },           // ページ側に渡すデータ
   }));
 }
 
 const { work } = Astro.props;
+// render(): Markdown本文をHTMLとして描画するための<Content />コンポーネントを取得
 const { Content } = await render(work);
 ---
 
@@ -25,11 +30,12 @@ const { Content } = await render(work);
     <ul class="tag-list">
       {work.data.stack.map((s) => <li>{s}</li>)}
     </ul>
-    <div class="work-links">
-      {work.data.github && <a href={work.data.github} target="_blank" rel="noopener noreferrer">GitHub</a>}
-      {work.data.zennArticle && <a href={work.data.zennArticle} target="_blank" rel="noopener noreferrer">関連記事(Zenn)</a>}
+    <div class="external-links">
+      {work.data.github && <a class="external-link" href={work.data.github} target="_blank" rel="noopener noreferrer">GitHub</a>}
+      {work.data.zennArticle && <a class="external-link" href={work.data.zennArticle} target="_blank" rel="noopener noreferrer">関連記事(Zenn)</a>}
     </div>
     <section>
+      <!-- Markdownの本文(なぜ作ったか/何を検証したか/どう設計したか/運用をどう考えたか)がここに出る -->
       <Content />
     </section>
     <p><a class="more" href="/works">← 制作物一覧に戻る</a></p>

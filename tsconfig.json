@@ -1,5 +1,9 @@
 {
+  // Astro公式が用意している厳格(strict)設定を土台にする
   "extends": "astro/tsconfigs/strict",
+  // 型チェック・エディタ補完の対象に含めるファイル
+  // ".astro/types.d.ts" = content collections(src/content/*)から自動生成される型定義
   "include": [".astro/types.d.ts", "**/*"],
+  // ビルド出力(dist/)は型チェック対象から除外
   "exclude": ["dist"]
 }
