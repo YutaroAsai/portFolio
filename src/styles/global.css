@@ -14,6 +14,12 @@
   box-sizing: border-box;
 }
 
+/* ページごとの縦の長さの違いでスクロールバーの有無が切り替わり、
+   中央寄せしているヘッダーナビが左右にズレて見えるのを防ぐ(常にスクロールバー分の余白を確保) */
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   margin: 0;
   background: var(--color-bg);
@@ -23,10 +29,11 @@ body {
   line-height: 1.7;
 }
 
+/* 左右の余白は画面幅によらず常に一定以上確保する(ブレークポイントで切り替えず、常時この値を使う) */
 main {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0.75rem;
+  padding: 0.75rem 1.5rem;
 }
 
 /* ヘッダーナビ(プロフィール/制作物/記事) */
@@ -37,27 +44,40 @@ header.site-header {
 header.site-header nav {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 1rem 1.25rem;
+  padding: 1rem 1.5rem;
   display: flex;
   gap: 1.25rem;
   align-items: center;
 }
 
+/* デフォルトは薄い色。選択中のページに対応する項目だけ.activeが付いて強調される */
 header.site-header a {
-  color: var(--color-text);
+  color: var(--color-muted);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 400;
 }
 
-/* ナビの2番目以降のリンク(制作物・記事)は少し薄い色にして、サイト名と差をつける */
-header.site-header nav a.secondary {
-  font-weight: 400;
-  color: var(--color-muted);
+header.site-header a.active {
+  color: var(--color-text);
+  font-weight: 600;
 }
 
 h1, h2, h3 {
   line-height: 1.4;
   margin: 0;
+}
+
+/* 記事・制作物本文(Markdown)内の画像。
+   本文と同じ幅いっぱいだと大きすぎるので、少し内側に寄せて枠線で背景と区別する */
+article img {
+  display: block;
+  max-width: 92%;
+  height: auto;
+  margin: 0.5rem auto;
+  padding: 0.25rem;
+  border: 1px solid #999999;
+  border-radius: 6px;
+  background: var(--color-bg);
 }
 
 /* 各ページの<section>(プロフィール欄/記事欄/制作物欄など)の間隔 */
@@ -71,6 +91,17 @@ section > h2 {
   border-bottom: 1px solid var(--color-border);
   padding-bottom: 0.4rem;
   margin-bottom: 1rem;
+}
+
+/* 記事・制作物本文(Markdown)内の見出しは、直後の本文との間隔だけを詰める。
+   本文と次の見出しとの間隔(pのデフォルト下マージン)は変えない */
+article section > h2 {
+  margin-bottom: 0.25rem;
+}
+
+/* 見出し直後の段落は、pのデフォルト上マージンも重なって間隔が広く見えるため0にする */
+article section > h2 + p {
+  margin-top: 0;
 }
 
 .role {
@@ -212,7 +243,7 @@ section > h2 {
 /* 「制作物一覧を見る →」のような、一覧ページへの誘導リンク */
 a.more {
   display: inline-block;
-  margin-top: 1rem;
+  margin: 0.25rem 0;
   font-size: 0.9rem;
 }
 

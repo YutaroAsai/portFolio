@@ -23,6 +23,7 @@ const { Content } = await render(work);
 
 <Layout title={`${work.data.title} | ${profile.name}`}>
   <article>
+    <a class="more" href="/works">← 制作物一覧に戻る</a>
     <h1>
       {work.data.title}
       {work.data.draft && <span class="draft-badge">draft</span>}
@@ -38,6 +39,6 @@ const { Content } = await render(work);
       <!-- Markdownの本文(なぜ作ったか/何を検証したか/どう設計したか/運用をどう考えたか)がここに出る -->
       <Content />
     </section>
-    <p><a class="more" href="/works">← 制作物一覧に戻る</a></p>
+    <a class="more" href="/works">← 制作物一覧に戻る</a>
   </article>
 </Layout>

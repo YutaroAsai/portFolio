@@ -13,7 +13,6 @@ const works = defineCollection({
   schema: z.object({
     title: z.string(),                                   // 作品タイトル
     summary: z.string(),                                 // 一覧カードに出る1〜2行の要約
-    category: z.enum(['backend', 'infra', 'ops-note']),  // 分類(現状は表示には未使用)
     stack: z.array(z.string()).default([]),              // 使用技術タグ。省略時は空配列
     thumbnail: z.string().optional(),                    // サムネイル画像パス。省略可
     github: z.string().url().optional(),                 // 個別リポジトリへのリンク。省略可

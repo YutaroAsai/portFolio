@@ -1,7 +1,6 @@
 ---
 title: "Cognito + ALB認証付きAPI(サンプル)"     # 一覧・詳細ページの見出し
 summary: "本文構成の見本です。実際の作品はこの型で書き換えてください。" # 一覧カードの要約文
-category: "backend"                             # backend / infra / ops-note のいずれか(表示には未使用)
 stack: ["Spring Boot", "AWS Cognito", "ALB"]     # 使用技術タグ
 github: "https://github.com/your-account/your-repo"                  # 個別リポジトリへのリンク(省略可)
 zennArticle: "https://zenn.dev/your-account/articles/your-article"   # 関連Zenn記事へのリンク(省略可)
